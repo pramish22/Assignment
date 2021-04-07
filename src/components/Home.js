@@ -29,12 +29,13 @@ const Home = () => {
 
     const backendHostUrl = "http://localhost:5000"
 
-    const requestOne = axios.get(backendHostUrl + "/transactions");
-    const requestTwo = axios.get(backendHostUrl + "/names");
+    
+    
 
     useEffect(() => {
         // axios.get(backendHostUrl + "/transactions")
         // axios.all([requestOne, requestTwo])
+        const requestOne = axios.get(backendHostUrl + "/transactions");
         requestOne
             .then((response) => {
                 setData(response.data)
@@ -45,6 +46,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
+        const requestTwo = axios.get(backendHostUrl + "/names");
         requestTwo
         .then((response) => {
             setDatas(response.data)
@@ -105,7 +107,7 @@ const Home = () => {
                             <Form.Control required isValid={num ? true : false} min="1" max="50" type="number" value={num} onChange={event => setNum(event.target.value)} />
                         </Form.Group>
                         <Form.Group controlId="exampleForm.ControlInput2">
-                            <Form.Label>Value of Stock</Form.Label>
+                            <Form.Label>Amount</Form.Label>
                             <Form.Control required isValid={number ? true : false} min="1" max="500" type="number" value={number} onChange={event => setNumber(event.target.value)} />
                         </Form.Group>
                         <Form.Group as={Row}>
@@ -132,7 +134,7 @@ const Home = () => {
                     <Button variant="secondary" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleTransaction, handleClose} >
+                    <Button variant="primary" onClick={() => {handleTransaction()}, handleClose} >
                         Proceed
                     </Button>
                 </Modal.Footer>

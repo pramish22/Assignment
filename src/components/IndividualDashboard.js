@@ -24,7 +24,6 @@ const IndividualDashboard = () => {
                 <Table responsive striped bordered hover>
                 <thead className="table-success">
                     <tr>
-                        <th>S.N.</th>
                         <th>Company Symbol</th>
                         <th>Total Buy Quantity</th>
                         <th>Total Buy Amount</th>
@@ -34,7 +33,6 @@ const IndividualDashboard = () => {
                 </thead>
                 <tbody>
                         <tr key={index}>
-                            <th scope="row">{index + 1}</th>
                             <td>{deta.company_symbol}</td>
                             <td>{deta.total_buy_quantity}</td>
                             <td>{deta.total_buy_amount}</td>
