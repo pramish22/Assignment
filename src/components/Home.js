@@ -1,11 +1,20 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { Form, Table, Button, Modal, Row, Col } from 'react-bootstrap';
 
 const Home = () => {
     const [data, setData] = useState([]);
     const [num, setNum] = useState("");
+    const [show, setShow] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const backendHostUrl = "http://localhost:5000"
+
     useEffect(() => {
-        axios.get('https://jsonblob.com/api/jsonBlob/04c5032d-92dd-11eb-98cf-c35208dfb663')
+        axios.get(backendHostUrl + "/transactions")
             .then((response) => {
                 setData(response.data)
             })
@@ -21,71 +30,82 @@ const Home = () => {
     }, [])
 
     return (
-        <div className="container-fluid">
-            <div className="row justify-content-md-center">
-                <div>
-                    <div className="table table-striped">
-                        <thead className="table-dark">
-                            <tr>
-                                <th scope="col">S.N.</th>
-                                <th scope="col">Stock Name</th>
-                                <th scope="col">Transaction Type</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Transaction Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((deta) => (
-                                <tr>
-                                    <th scope="row">{deta.transaction_id}</th>
-                                    <td>{deta.company_symbol}</td>
-                                    <td>{deta.transaction_type}</td>
-                                    <td>{deta.quantity}</td>
-                                    <td>{deta.amount}</td>
-                                    <td>{deta.transaction_date}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </div>
-                </div>
+        <>
+            <Table responsive striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>S.N.</th>
+                        <th>Stock Name</th>
+                        <th>Transaction Type</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Transaction Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.map((deta, index) => (
+                        <tr key={index}>
+                            <th scope="row">{index+1}</th>
+                            <td>{deta.company_symbol}</td>
+                            <td>{deta.transaction_type}</td>
+                            <td>{deta.quantity}</td>
+                            <td>{deta.amount}</td>
+                            <td>{deta.transaction_date}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+            <div className="d-flex justify-content-center">
+                <Button variant="success" onClick={handleShow} className="mr-5" >
+                    Buy/Sell
+                </Button>
             </div>
-            <form className="col-12 col-sm-4 mt-10">
-                <div className="mb-3">
-                    <select className="form-select" aria-label="Stock Name">
-                        <option selected>Stock Name</option>
-                        {data.map((deta) => (
-                            <>
-                                <option value={deta.transaction_id}>{deta.company_symbol}</option>
-                            </>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label for="numberOfStocks" className="form-label">Number of Stocks</label>
-                    <input type="number" className="form-control" id="numberOfStocks"
-                        value={num} onChange={event => setNum(event.target.value)} />
-                </div>
-                <div>
-                    <select className="form-select" aria-label="Transaction Type">
-                        <option selected>Transaction Type</option>
-                        <option value="1">Buy</option>
-                        <option value="2">Sell</option>
-                    </select>
-                </div>
-                <div className="row">
-                    <h6>Total: </h6>
-                    <input disabled type="text" value={num * 100} />
-                </div>
-                <div>
-                    <fieldset disabled>
-                        <input type="text" id="disabledTextInput" class="form-control" placeholder={new Date()} />
-                    </fieldset>
-                </div>
-                <button className="btn btn-primary" type="submit">Buy</button>
-            </form>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Transact Now</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group controlId="exampleForm.ControlSelect1">
+                            <Form.Label>Stock Name: </Form.Label>
+                            <Form.Control as="select">
+                                <option>----------</option>
+                                {data.map((deta, index) => (
+                                    <option key={index}>{deta.company_symbol}</option>
+                                ))}
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="exampleForm.ControlInput1" hasValidation>
+                            <Form.Label>Number of Stocks</Form.Label>
+                            <Form.Control required isValid={num ? true : false} min="1" max="50" type="number" value={num} maxValue="50" onChange={event => setNum(event.target.value)} />
+                        </Form.Group>
+                        <Form.Group as={Row}>
+                            <Col>
+                                <Form.Label>Transaction Type</Form.Label>
+                                    <Form.Check type="radio" label="Buy" name="firstRadio" id="firstRadioButton" />
+                                    <Form.Check type="radio" label="Sell" name="secondRadio" id="secondRadioButton" />
+                            </Col>
+                        </Form.Group>
 
-        </div>
+                        <Form.Group>
+                            <Form.Label>Total: </Form.Label>
+                            <Form.Control type="number" value={num * 100} disabled />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Control type="text" value={Date()} disabled />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleClose}>
+                        Proceed
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     )
 }
 

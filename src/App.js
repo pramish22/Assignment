@@ -9,6 +9,7 @@ function App() {
 			<div>
 				<Switch>
 					<Route path="/dashboard">
+						<NavBar />
 						<Dashboard />
 					</Route>
 					<Route path="/">
