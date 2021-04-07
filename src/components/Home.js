@@ -4,30 +4,55 @@ import { Form, Table, Button, Modal, Row, Col } from 'react-bootstrap';
 
 const Home = () => {
     const [data, setData] = useState([]);
+    const [datas, setDatas] = useState([]);
     const [num, setNum] = useState("");
+    const [number, setNumber] = useState("");
     const [show, setShow] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const handleTransaction = () => {
+        axios.post('http://localhost:5000/transactions', {
+            company_symbol: 'CHL',
+            quantity: 20,
+            unit_price: 120,
+            transaction_type: 'sell',
+            transaction_date: '2021-04-07'
+          })
+          .then((response) => {
+            console.log(response);
+          }, (error) => {
+            console.log(error);
+          });
+    }
+
     const backendHostUrl = "http://localhost:5000"
 
+    const requestOne = axios.get(backendHostUrl + "/transactions");
+    const requestTwo = axios.get(backendHostUrl + "/names");
+
     useEffect(() => {
-        axios.get(backendHostUrl + "/transactions")
+        // axios.get(backendHostUrl + "/transactions")
+        // axios.all([requestOne, requestTwo])
+        requestOne
             .then((response) => {
                 setData(response.data)
             })
             .catch((error) => {
                 console.error("Error fetching data: ", error)
             })
+    }, []);
 
-        // fetch('https://jsonblob.com/api/jsonBlob/04c5032d-92dd-11eb-98cf-c35208dfb663')
-        // .then((response) => response.json())
-        // .catch((error) => {
-        //     console.error("Error fetching data...", error)
-        // });
-    }, [])
+    useEffect(() => {
+        requestTwo
+        .then((response) => {
+            setDatas(response.data)
+        })
+        .catch((error) => {
+            console.error("Error fetching data: ", error)
+        })
+    }, []);
 
     return (
         <>
@@ -45,7 +70,7 @@ const Home = () => {
                 <tbody>
                     {data.map((deta, index) => (
                         <tr key={index}>
-                            <th scope="row">{index+1}</th>
+                            <th scope="row">{index + 1}</th>
                             <td>{deta.company_symbol}</td>
                             <td>{deta.transaction_type}</td>
                             <td>{deta.quantity}</td>
@@ -69,30 +94,37 @@ const Home = () => {
                         <Form.Group controlId="exampleForm.ControlSelect1">
                             <Form.Label>Stock Name: </Form.Label>
                             <Form.Control as="select">
-                                <option>----------</option>
-                                {data.map((deta, index) => (
-                                    <option key={index}>{deta.company_symbol}</option>
+                                <option>Select</option>
+                                {datas.map((deta, index) => (
+                                    <option key={index}>{deta.company_name}({deta.company_symbol})</option>
                                 ))}
                             </Form.Control>
                         </Form.Group>
-                        <Form.Group controlId="exampleForm.ControlInput1" hasValidation>
+                        <Form.Group controlId="exampleForm.ControlInput1">
                             <Form.Label>Number of Stocks</Form.Label>
-                            <Form.Control required isValid={num ? true : false} min="1" max="50" type="number" value={num} maxValue="50" onChange={event => setNum(event.target.value)} />
+                            <Form.Control required isValid={num ? true : false} min="1" max="50" type="number" value={num} onChange={event => setNum(event.target.value)} />
+                        </Form.Group>
+                        <Form.Group controlId="exampleForm.ControlInput2">
+                            <Form.Label>Value of Stock</Form.Label>
+                            <Form.Control required isValid={number ? true : false} min="1" max="500" type="number" value={number} onChange={event => setNumber(event.target.value)} />
                         </Form.Group>
                         <Form.Group as={Row}>
                             <Col>
                                 <Form.Label>Transaction Type</Form.Label>
-                                    <Form.Check type="radio" label="Buy" name="firstRadio" id="firstRadioButton" />
-                                    <Form.Check type="radio" label="Sell" name="secondRadio" id="secondRadioButton" />
+                                <Form.Control as="select">
+                                    <option>Select</option>
+                                    <option>Buy</option>
+                                    <option>Sell</option>
+                                </Form.Control>
                             </Col>
                         </Form.Group>
 
                         <Form.Group>
                             <Form.Label>Total: </Form.Label>
-                            <Form.Control type="number" value={num * 100} disabled />
+                            <Form.Control type="number" value={Math.abs(num * number)} readOnly />
                         </Form.Group>
                         <Form.Group>
-                            <Form.Control type="text" value={Date()} disabled />
+                            <Form.Control type="text" value={Date()} readOnly />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -100,7 +132,7 @@ const Home = () => {
                     <Button variant="secondary" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleClose}>
+                    <Button variant="primary" onClick={handleTransaction, handleClose} >
                         Proceed
                     </Button>
                 </Modal.Footer>
