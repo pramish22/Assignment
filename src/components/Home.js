@@ -8,29 +8,41 @@ const Home = () => {
     const [num, setNum] = useState("");
     const [number, setNumber] = useState("");
     const [show, setShow] = useState(false);
+    const [stockName, setStockName] = useState("");
+    const [transactionType, setTransactionType] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const date = new Date();
+
     const handleTransaction = () => {
-        axios.post('http://localhost:5000/transactions', {
-            company_symbol: 'CHL',
-            quantity: 20,
-            unit_price: 120,
-            transaction_type: 'sell',
-            transaction_date: '2021-04-07'
-          })
-          .then((response) => {
-            console.log(response);
-          }, (error) => {
-            console.log(error);
-          });
+        console.log(stockName);
+        console.log(num);
+
+        const start = stockName.lastIndexOf('(');
+        const end = stockName.lastIndexOf(')');
+        const symbol = stockName.substring(start + 1, end);
+        
+        axios.post(backendHostUrl + '/transactions', {
+            company_symbol: symbol,
+            quantity: parseInt(num),
+            unit_price: parseInt(number),
+            transaction_type: transactionType,
+            transaction_date: date
+        })
+            .then((response) => {
+                console.log(response);
+            }, (error) => {
+                console.log(error);
+            });
+        handleClose();
     }
 
-    const backendHostUrl = "http://localhost:5000"
+    const backendHostUrl = "https://sharebazar.herokuapp.com"
 
-    
-    
+
+
 
     useEffect(() => {
         // axios.get(backendHostUrl + "/transactions")
@@ -48,12 +60,12 @@ const Home = () => {
     useEffect(() => {
         const requestTwo = axios.get(backendHostUrl + "/names");
         requestTwo
-        .then((response) => {
-            setDatas(response.data)
-        })
-        .catch((error) => {
-            console.error("Error fetching data: ", error)
-        })
+            .then((response) => {
+                setDatas(response.data)
+            })
+            .catch((error) => {
+                console.error("Error fetching data: ", error)
+            })
     }, []);
 
     return (
@@ -92,31 +104,33 @@ const Home = () => {
                     <Modal.Title>Transact Now</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={handleTransaction}>
                         <Form.Group controlId="exampleForm.ControlSelect1">
                             <Form.Label>Stock Name: </Form.Label>
-                            <Form.Control as="select">
+                            <Form.Control as="select" value={stockName} onChange={(event) => setStockName(event.target.value)}>
                                 <option>Select</option>
                                 {datas.map((deta, index) => (
-                                    <option key={index}>{deta.company_name}({deta.company_symbol})</option>
+                                    <option key={index} >{deta.company_name}({deta.company_symbol})</option>
                                 ))}
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="exampleForm.ControlInput1">
                             <Form.Label>Number of Stocks</Form.Label>
-                            <Form.Control required isValid={num ? true : false} min="1" max="50" type="number" value={num} onChange={event => setNum(event.target.value)} />
+                            <Form.Control required isValid={num ? true : false} name="num" min="1" max="50" type="number" value={num} onChange={(event) => setNum(event.target.value)} />
+                            {console.log(num)}
                         </Form.Group>
                         <Form.Group controlId="exampleForm.ControlInput2">
                             <Form.Label>Amount</Form.Label>
-                            <Form.Control required isValid={number ? true : false} min="1" max="500" type="number" value={number} onChange={event => setNumber(event.target.value)} />
+                            <Form.Control required isValid={number ? true : false} name="number" min="1" max="500" type="number" value={number} onChange={(event) => setNumber(event.target.value)} />
+                            {console.log(number)}
                         </Form.Group>
                         <Form.Group as={Row}>
                             <Col>
                                 <Form.Label>Transaction Type</Form.Label>
-                                <Form.Control as="select">
+                                <Form.Control as="select" value={transactionType} onChange={(event) => setTransactionType(event.target.value)} >
                                     <option>Select</option>
-                                    <option>Buy</option>
-                                    <option>Sell</option>
+                                    <option value="buy">Buy</option>
+                                    <option value="sell">Sell</option>
                                 </Form.Control>
                             </Col>
                         </Form.Group>
@@ -134,7 +148,7 @@ const Home = () => {
                     <Button variant="secondary" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="primary" onClick={() => {handleTransaction()}, handleClose} >
+                    <Button variant="primary" onClick={handleTransaction} >
                         Proceed
                     </Button>
                 </Modal.Footer>

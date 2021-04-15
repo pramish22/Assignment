@@ -12,7 +12,7 @@ function App() {
 						<NavBar />
 						<Dashboard />
 					</Route>
-					<Route path="/">
+					<Route exact path="/">
 						<NavBar />
 						<Home />
 					</Route>

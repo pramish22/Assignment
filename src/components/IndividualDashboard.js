@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Table } from 'react-bootstrap'
 
 const IndividualDashboard = () => {
-    const backendHostUrl = "http://localhost:5000";
+    const backendHostUrl = "https://sharebazar.herokuapp.com";
 
     const [data, setData] = useState([]);
 
