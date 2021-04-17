@@ -1,22 +1,32 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Table } from 'react-bootstrap'
+import { Spinner, Table } from 'react-bootstrap'
 
 const IndividualDashboard = () => {
     const backendHostUrl = "https://sharebazar.herokuapp.com";
 
     const [data, setData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true); 
 
     useEffect(() => {
         axios.get(backendHostUrl + "/dashboard")
             .then((response) => {
-                setData(response.data)
+                setData(response.data);
+                setIsLoading(false);
             })
             .catch((error) => {
                 console.error("Error fetching data: ", error)
             })
     }, [])
     return (
+        isLoading ?
+        <div className="d-flex justify-content-center">
+                <Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </Spinner>
+                <p>Loading...</p>
+            </div>
+            :
         <div>
             {data.map((deta, index) => (
                 <div key={index}>
