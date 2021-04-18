@@ -35,8 +35,14 @@ const Home = () => {
             transaction_type: transactionType,
             transaction_date: date
         })
-            .then((response) => {
-                return response.data;
+            .then(() => {
+                axios.get(backendHostUrl + "/transactions")
+                    .then((response) => {
+                        setData(response.data);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching data: ", error)
+                    })
             })
             .catch((error) => {
                 console.log("Error: " + error);
