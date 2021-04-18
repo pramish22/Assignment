@@ -16,3 +16,13 @@ button:disabled {
   cursor: not-allowed;
   pointer-events: all !important;
 }
+
+th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+.newbutton {
+  margin-bottom: 50px;
+}

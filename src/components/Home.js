@@ -14,6 +14,10 @@ const Home = () => {
 
     const handleClose = () => {
         setShow(false);
+        setNum("");
+        setNumber("");
+        setStockName("");
+        setTransactionType("");
     }
     const handleShow = () => setShow(true);
 
@@ -32,9 +36,10 @@ const Home = () => {
             transaction_date: date
         })
             .then((response) => {
-                setData(response.data);
-            }, (error) => {
-                console.log(error);
+                return response.data;
+            })
+            .catch((error) => {
+                console.log("Error: " + error);
             });
         handleClose();
     }
@@ -75,7 +80,6 @@ const Home = () => {
                 <Spinner animation="border" role="status">
                     <span className="sr-only">Loading...</span>
                 </Spinner>
-                <p>Loading...</p>
             </div>
             :
             <div>
@@ -103,7 +107,7 @@ const Home = () => {
                         ))}
                     </tbody>
                 </Table>
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center newbutton">
                     <Button variant="success" onClick={handleShow} >
                         Buy/Sell
                     </Button>
@@ -160,7 +164,7 @@ const Home = () => {
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
+                        <Button variant="secondary" onClick={handleClose} type="reset" value="reset">
                             Cancel
                     </Button>
                         <Button variant="primary" onClick={handleTransaction} disabled={!num || !number || !stockName || !transactionType ? true : false} >
