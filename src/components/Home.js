@@ -105,7 +105,7 @@ const Home = () => {
                             <tr key={index}>
                                 <th scope="row">{index + 1}</th>
                                 <td>{deta.company_symbol}</td>
-                                <td>{deta.transaction_type}</td>
+                                <td>{deta.transaction_type.charAt(0).toUpperCase() + deta.transaction_type.slice(1)}</td>
                                 <td>{deta.quantity}</td>
                                 <td>{deta.amount}</td>
                                 <td>{deta.transaction_date.substring(0, 10)}</td>
@@ -125,7 +125,7 @@ const Home = () => {
                     <Modal.Body>
                         <Form onSubmit={handleTransaction} id="form">
                             <Form.Group controlId="exampleForm.ControlSelect1">
-                                <Form.Label>Stock Name: </Form.Label>
+                                <Form.Label>Stock Name</Form.Label>
                                 <Form.Control as="select" value={stockName} onChange={(event) => setStockName(event.target.value)}>
                                     <option>Select</option>
                                     {datas.map((deta, index) => (
@@ -161,7 +161,7 @@ const Home = () => {
                             </Form.Group>
 
                             <Form.Group>
-                                <Form.Label>Total: </Form.Label>
+                                <Form.Label>Total</Form.Label>
                                 <Form.Control type="number" value={Math.abs(num * number)} readOnly />
                             </Form.Group>
                             <Form.Group>
@@ -173,7 +173,7 @@ const Home = () => {
                         <Button variant="secondary" onClick={handleClose} type="reset" value="reset">
                             Cancel
                     </Button>
-                        <Button variant="primary" onClick={handleTransaction} disabled={!num || !number || !stockName || !transactionType ? true : false} >
+                        <Button variant="primary" onClick={handleTransaction} disabled={!num || !number || !stockName || !transactionType || parseInt(num) < 1 || parseInt(number) < 1 ? true : false} >
                             Proceed
                     </Button>
                     </Modal.Footer>

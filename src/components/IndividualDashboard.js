@@ -24,13 +24,12 @@ const IndividualDashboard = () => {
                 <Spinner animation="border" role="status">
                     <span className="sr-only">Loading...</span>
                 </Spinner>
-                <p>Loading...</p>
             </div>
             :
         <div>
             {data.map((deta, index) => (
                 <div key={index}>
-                <h5>{deta.company_name}</h5>
+                <h5 className="d-flex justify-content-center">{deta.company_name}</h5>
                 <Table responsive striped bordered hover>
                 <thead className="table-success">
                     <tr>
